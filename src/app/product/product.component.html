@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Bootstrap Example</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</head>
+<body>
+
+<div class="container">
+    <button type="button" class="btn btn-default" (click)="openModel('cat')">Add Category</button>&nbsp;&nbsp;
+    <button type="button" class="btn btn-default" (click)="openModel('prod')">Add Product</button>
+ <br><br>
+  <div class="col-md-6">
+  <h5>Category</h5>
+  <table class="table table-bordered">
+    <thead>
+      <tr>
+        <th>Category Name</th>
+        <th>Category Desc</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let cat of categoryArray">
+        <td>{{ cat.cat_name }}</td>
+        <td>{{ cat.cat_desc }}</td>
+        <td><a href="javascript:void(0);" (click)="editCategory(cat.cat_id)">Edit</a></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+<div class="col-md-6">
+    <h5>Product</h5>
+    <table class="table table-bordered">
+      <thead>
+        <tr>
+          <th>Produ Name</th>
+          <th>Category Name</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let prod of productArray">
+          <td>{{ prod.prod_name }}</td>
+          <td>{{ prod.cat_name }}</td>
+          <td>john@example.com</td>
+        </tr>
+    </tbody>
+    </table>
+  </div>
+</div>
+
+</body>
+</html>
+
+<bs-modal #modal_popup [keyboard]="false" [backdrop]="'static'">
+    <bs-modal-header [showDismiss]="false">
+        <h4 class="modal-title">
+          <p *ngIf="isCategory">Add Category</p>
+          <p *ngIf="isProdu">Add Product</p>
+        </h4>
+    </bs-modal-header>
+    <bs-modal-body>
+        <form *ngIf="isCategory" [formGroup]="categoryData">
+          <div class="form-group">
+            <label for="cat_name">Category Name</label>
+            <input type="text" name="cat_name" formControlName="cat_name" class="form-control" id="cat_name">
+            <p style="color:red;" *ngIf="categoryData.get('cat_name').hasError('required') && categoryData.get('cat_name').touched" class="help-inline"> This field is required.
+              </p>
+          </div>
+          <div class="form-group">
+            <label for="cat_desc">Category Description</label>
+            <input type="text" name="cat_desc" formControlName="cat_desc" class="form-control" id="cat_desc">
+            <p style="color:red;" *ngIf="categoryData.get('cat_desc').hasError('required') && categoryData.get('cat_desc').touched" class="help-inline"> This field is required.
+              </p>
+          </div>
+          <input type="file" (change)=fileEvent($event)>
+          <button  *ngIf="!edit_category"  type="submit" [disabled]="!categoryData.valid" (click)="add_cat(categoryData.value);" class="btn btn-default">Add Category</button>
+          <button  *ngIf="edit_category"  type="submit" [disabled]="!categoryData.valid" (click)="update_cat(categoryData.value);" class="btn btn-default">Update Category </button>
+        </form>
+
+        <form *ngIf="isProdu" [formGroup]="productData">
+            <div class="form-group">
+              <label for="prod_name">Product Name</label>
+              <input type="text" name="prod_name" formControlName="prod_name" class="form-control" id="prod_name">
+              <p style="color:red;" *ngIf="productData.get('prod_name').hasError('required') && productData.get('prod_name').touched" class="help-inline"> This field is required.
+                </p>
+            </div>
+            <div class="form-group">
+                <label class="control-label"><strong>Category</strong> </label> 
+                <select style="padding-left: 0px!important;" class="form-control"  formControlName="cat_id" name="cat_id" id="cat_id" >
+                   <option value="0">Please Select</option>
+                   <option  *ngFor="let cat of categoryArray;" value="{{ cat.cat_id }}">{{ cat.cat_name}}</option>
+                </select>
+             </div>
+            <!-- <div class="form-group">
+              <label for="cat_desc">Category Description</label>
+              <input type="text" name="cat_desc" formControlName="cat_desc" class="form-control" id="cat_desc">
+              <p style="color:red;" *ngIf="categoryData.get('cat_desc').hasError('required') && categoryData.get('cat_desc').touched" class="help-inline"> This field is required.
+                </p>
+            </div> -->
+            <button  *ngIf="!edit_product"  type="submit" [disabled]="!productData.valid" (click)="add_product(productData.value);" class="btn btn-default">Add Product</button>
+            <button  *ngIf="edit_product"  type="submit" [disabled]="!productData.valid" (click)="update_product(productData.value);" class="btn btn-default">Edit Product </button>
+          </form>
+    </bs-modal-body>
+    <bs-modal-footer [showDefaultButtons]="true"></bs-modal-footer>
+</bs-modal>
